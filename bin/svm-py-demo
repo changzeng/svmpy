@@ -9,17 +9,17 @@ import itertools
 import argh
 
 
-def example(num_samples=10, num_features=2, grid_size=20, filename="svm.pdf"):
-    samples = np.matrix(np.random.normal(size=num_samples * num_features)
-                        .reshape(num_samples, num_features))
-    labels = 2 * (samples.sum(axis=1) > 0) - 1.0
+def example(num_samples=1000, num_features=2, grid_size=20):
+    samples = np.array(np.random.normal(size=num_samples * num_features)
+                       .reshape(num_samples, num_features))
+    labels = 2 * (np.sum(np.multiply(samples, samples), axis=1) >= 1) - 1.0
     trainer = svmpy.SVMTrainer(svmpy.Kernel.linear(), 0.1)
     predictor = trainer.train(samples, labels)
 
-    plot(predictor, samples, labels, grid_size, filename)
+    plot(predictor, samples, labels, grid_size)
 
 
-def plot(predictor, X, y, grid_size, filename):
+def plot(predictor, X, y, grid_size):
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.linspace(x_min, x_max, grid_size),
@@ -43,7 +43,7 @@ def plot(predictor, X, y, grid_size, filename):
                 c=flatten(y), cmap=cm.Paired)
     plt.xlim(x_min, x_max)
     plt.ylim(y_min, y_max)
-    plt.savefig(filename)
+    plt.show()
 
 
 if __name__ == "__main__":
